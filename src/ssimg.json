@@ -1,0 +1,14 @@
+{
+    "status": 200,
+    "data": [
+        {
+            "id": 70,
+            "name": "Muhammed faheem",
+            "place": "Idukki dam",
+            "experience": "It is a good place and everyone shoul be msmsjsj",
+            "rating": "6",
+            "image": "http://f348-103-70-197-144.ngrok.io/media/media/users/rn_image_picker_lib_temp_4aee0599-e212-4523-b356-675f124cac95.jpg",
+            "profile": "http://f348-103-70-197-144.ngrok.io/media/media/users/rn_image_picker_lib_temp_d989eab3-0dde-4e25-8623-61d508992c1e.jpg"
+        }
+    ]
+}

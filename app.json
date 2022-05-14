@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "quicktrip",
+    "slug": "quicktrip",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

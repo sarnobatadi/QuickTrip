@@ -1,0 +1,9 @@
+{
+    "status": 200,
+    "user": {
+        "id": 24,
+        "username": "Faheee",
+        "email": "Faheemkattekaden@gmail.com"
+    },
+    "token": "79b98173e56625b8888fef64fdd9049d353afa274986f0d71f115a774e2ef5d5"
+}
