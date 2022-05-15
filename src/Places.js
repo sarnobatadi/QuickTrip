@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Text, View, TouchableOpacity, Linking, StyleSheet, ScrollView, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { firebaseConfig } from '../firebase';
@@ -22,40 +22,34 @@ const db = firebase.firestore();
 
 const Places = () => {
     const [info , setInfo] = useState([]);
+    const [user, setUser] = useState()
+    const [groceryList, setGroceryList] = useState();
+    const [placeList, setPlaceList] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
     var obj = {}
 
-    var list = [{ id: 0, name: 'Kesari Tours, Pune', image: 'https://gumlet.assettype.com/swarajya%2F2019-10%2Fc15839cf-81c2-47d5-a4df-84a5ff4fcef3%2FBandipur_National_park_road.jpg?w=640&q=75&auto=format%2Ccompress'},]
-    const Fetchdata = ()=>{
-    db.collection("places").get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            
-            var data = doc.data();
-            // setInfo(arr => [...arr , data]);
-            
-            // console.log(list);
-            // console.log(`${doc.id} => ${doc.data().name}`);
+    //var list = [{ id: 0, name: 'Kesari Tours, Pune', image: 'https://gumlet.assettype.com/swarajya%2F2019-10%2Fc15839cf-81c2-47d5-a4df-84a5ff4fcef3%2FBandipur_National_park_road.jpg?w=640&q=75&auto=format%2Ccompress'},]
+    // const Fetchdata = ()=>{
+   
+    
+    useEffect(() => {
+        db.collection("places").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                
+                var data = doc.data();
+                //setInfo(arr => [...arr , data]);
+                setPlaceList([...placeList,data])
+                console.log(data);
+                console.log(`${doc.id} => ${doc.data().name}`);
+            });
         });
-    });
-    
-    }
-    Fetchdata()
-    
-
-  
-    
-
-    // var list = [{ id: 1, name: 'Kesari Tours, Pune', image: 'https://gumlet.assettype.com/swarajya%2F2019-10%2Fc15839cf-81c2-47d5-a4df-84a5ff4fcef3%2FBandipur_National_park_road.jpg?w=640&q=75&auto=format%2Ccompress', phone: 'tel:750908331', web: 'https://www.morickapresort.com/' },
-    // { id: 2, name: 'Amit Tours , Sangli', image: 'https://static.theprint.in/wp-content/uploads/2018/08/2018_8img10_Aug_2018_PTI8_10_2018_000227B-696x392.jpg', phone: 'tel:7531', web: 'https://www.morickapresort.com/' },
-    // { id: 3, name: 'Shreyash Tourism , Sangli', image: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Gavi%2C_Kerala.jpg', phone: 'tel:8331', web: 'https://www.morickapresort.com/' },
-    // // { id: 4, name: 'Neyyar,Kollam', image: 'https://cdn.pixabay.com/photo/2017/08/17/10/47/paris-2650808_960_720.jpg', phone: 'tel:750908331', web: 'https://www.morickapresort.com/' },
-    // // { id: 5, name: 'Moonar,idukk', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4', phone: 'tel:8331', web: 'https://www.morickapresort.com/' },
-    // // { id: 6, name: 'Pookote Lake,Wayanad', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4', phone: 'tel:750331', web: 'https://www.morickapresort.com/' },
-    // // { id: 7, name: 'Edakkal cave,Wayanad', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4', phone: 'tel:7908331', web: 'https://www.morickapresort.com/' },]
-    // ]
-    // console.log('New',list)
-    // list = nlist
-
-    // console.log(list)
+        setIsLoading(false)
+    },[])
+        
+    useEffect(() => {
+      
+    }, [isLoading])
+        
     return (
         <View style={styles.container}>
             <View style={{ width: '100%', height: 50, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
@@ -63,25 +57,23 @@ const Places = () => {
             </View> 
             <ScrollView>
                 <View style={styles.subContainer}>
-                {
-            info.map((data) => (
-                <Text>{data.name}</Text>
-            ))
-        }
-                <Text>This is text{list.length}</Text>
-                    {list.map(item =>
+     
+
+                    {placeList && placeList.map(item =>
                         <View style={styles.cardView} key={item.id}>
-                             <Text style={{ color: 'orange', fontFamily: boldFont, fontSize: 20, textAlign: 'center' }}>{item.name}</Text>
-                             {/* <View style={styles.card}>
+                           
+                             <View style={styles.card}>
                                 <View style={styles.imageView}>
                                     <Image style={styles.image} source={{ uri: item.image }} ></Image>
-                                    <Text style={{ color: 'orange', fontFamily: boldFont, fontSize: 20, textAlign: 'center' }}>{item.name}</Text>
+                                      <Text style={{ color: 'orange', fontFamily: boldFont, fontSize: 20, textAlign: 'center' }}>{item.name}</Text>
+                                    
                                 </View>
                                 <View style={styles.cardtitleView}>
-                                    <Text style={{ color: 'orange', fontFamily: boldFont, fontSize: 20, textAlign: 'center' }}>{item.name}</Text>
+                                   
                                     <View style={styles.contact}>
+                                        
                                         <TouchableOpacity style={{ backgroundColor: '#f5fdf8', width: 100, alignItems: 'center', borderRadius: 6, elevation: 4 }}
-                                            onPress={() => { Linking.openURL(item.phone); }}>
+                                            onPress={() => { Linking.openURL(`tel:${item.phone}`); }}>
                                             <Text style={{ color: 'black', fontFamily: boldFont, }}>Phone</Text>
                                             <Icon name={"phone"} size={24} color={'green'} />
                                         </TouchableOpacity>
@@ -92,7 +84,7 @@ const Places = () => {
                                         </TouchableOpacity>
                                     </View>
                                 </View> 
-                            </View>  */}
+                            </View> 
                         </View>)}
                 </View>
             </ScrollView>
@@ -121,7 +113,7 @@ const styles = StyleSheet.create({
 
     },
     imageView: {
-        height: 40,
+        height: 150,
         width: '100%',
         borderRadius: 20,
         // elevation:4
