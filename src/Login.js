@@ -5,6 +5,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import './global';
 import global from './global'
+import a from './login.json'
 
 
 const Login = ({ navigation }) => {
@@ -34,27 +35,38 @@ const Login = ({ navigation }) => {
         data.append('username', username);
         data.append('password', password);
 
-        var config = {
-            method: 'post',
-            url: global.baseUrl + 'logins/',
-            // headers: {
-            // },
-            data: data
-        };
-        console.log(config.url, config.data)
-        axios(config)
-            .then(function (response) {
-                if (response.data.status === 200) {
-                    setAsync(response.data.data.token)
-                } else{
-                    console.log('Invalid')
-                }
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                alert('Invaid Credentials')
-                console.log(error);
-            });
+        // var config = {
+        //     method: 'post',
+        //     url: global.baseUrl + 'logins/',
+        //     // headers: {
+        //     // },
+        //     data: data
+        // };
+        // console.log(config.url, config.data)
+        // axios(config)
+        //     .then(function (response) {
+        //         response={data: a}
+        //         console.log(response)
+        //         if (response.data.status === 200) {
+        //             setAsync(response.data.data.token)
+        //         } else{
+        //             console.log('Invalid')
+        //         }
+        //         console.log(JSON.stringify(response.data));
+        //     })
+        //     .catch(function (error) {
+        //         alert('Invaid Credentials')
+        //         console.log(error);
+        //     });
+
+        const response={"data": a}
+        console.log(response)
+        if (response.data.status === 200) {
+            setAsync(response.data.data.token)
+        } else{
+            console.log('Invalid')
+        }
+        console.log(JSON.stringify(response.data));
 
     }
 

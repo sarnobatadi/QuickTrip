@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState,useContext,useEffect } from 'react'
 import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, ImageBackground, Modal } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImageView from "react-native-image-viewing";
 
-
+import MyContext from './Contexts/Context'
 
 import Slider from './slider/Slider'
+
 
 
 const HomePage = ({ navigation }) => {
 
     const [modal, setModal] = useState(false)
     const [visible, setIsVisible] = useState(false);
-
-
+    const context = useContext(MyContext)
+    //const name=context.getCity()
 
 
 
@@ -50,7 +51,10 @@ const HomePage = ({ navigation }) => {
 
     ]
 
-
+    useEffect(() => {
+      
+    }, [name])
+    
 
     return (
         <View style={styles.container}>
@@ -76,7 +80,7 @@ const HomePage = ({ navigation }) => {
 
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Text style={{ fontSize: 24, color: 'white' }}>𝐰𝐡𝐞𝐫𝐞 𝐝𝐨 𝐮 𝐰𝐚𝐧𝐭 𝐭𝐨  </Text>
+                                <Text style={{ fontSize: 24, color: 'white' }}>𝐰𝐡𝐞𝐫𝐞 𝐝𝐨 𝐮 𝐰𝐚𝐧𝐭 𝐭𝐨  {context.getCity}{console.log("**********",context.getCity)}</Text>
                                 <Text style={{ fontSize: 26, fontFamily: liteFont, color: 'orange', marginLeft: 6 }}>ɠơ </Text>
                                 <Text style={{ fontSize: 25, fontFamily: liteFont, color: '#fff' }}>?̾</Text>
                             </View>
@@ -129,10 +133,9 @@ const HomePage = ({ navigation }) => {
                     <View style={{ paddingLeft: 10 }}>
                         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                             <View style={styles.reels}>
-
                                 {reels.map(item =>
                                     <TouchableOpacity activeOpacity={0.7} style={{ marginHorizontal: 6 }} key={item.id} onPress={() => setIsVisible(true)}>
-                                        <ImageBackground style={styles.reelimg} imageStyle={{ height: 250, width: 160, borderRadius: 12 }} style={styles.img2} source={{ uri: item.image }}>
+                                        <ImageBackground imageStyle={{ height: 250, width: 160, borderRadius: 12 }} style={styles.img2} source={{ uri: item.image }}>
                                             <View style={styles.inside}>
                                                 <View style={styles.head}>
                                                     <Text style={{ color: '#fff', fontFamily: liteFont, fontSize: 15 }}>{item.name}</Text>
@@ -140,15 +143,10 @@ const HomePage = ({ navigation }) => {
                                                         <Icon name={"map-marker"} size={18} color={'orange'} />
                                                         <Text style={{ fontSize: 12, color: '#fff', fontFamily: baseFont }}>{item.place}</Text>
                                                     </View>
-
                                                 </View>
-
                                             </View>
-
                                         </ImageBackground>
                                     </TouchableOpacity>)}
-
-
                             </View>
                         </ScrollView>
                         <View style={styles.reelUnder}>
@@ -164,14 +162,9 @@ const HomePage = ({ navigation }) => {
                             onRequestClose={() => setIsVisible(false)}
                         />
                     </View>
-
                 </ScrollView>
             </ImageBackground>
-
-
         </View>
-
-
     )
 }
 

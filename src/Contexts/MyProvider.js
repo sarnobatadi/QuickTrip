@@ -9,6 +9,8 @@ class MyProvider extends Component {
     state = {
         search: null,
         loading: true,
+        city:'aa',
+        user:''
     };
 
 
@@ -16,17 +18,28 @@ class MyProvider extends Component {
     setItem = (e) => {
         this.setState({ search: e })
     }
-
+    setCity = (e) => {
+        this.setState({ city: e })
+    }
+    setUser = (e) => {
+        this.setState({ user: e })
+    }
     setLoading = () => {
         this.setState({ loading: true })
         setTimeout(() => {
             this.setState({ loading: false })
         }, 200);
     };
+    getUser=()=>{
+        return this.state.user;
+    }
+    getCity=()=>{
+        return this.state.city;
+    }
 
 
     filterList = (lis) => {
-        return lis.filter(listItem => listItem.place.toLowerCase().includes(this.state.search.toLowerCase()));
+        return lis.filter(listItem => listItem.cityname.toLowerCase().includes(this.state.search.toLowerCase()));
     }
 
     render() {
@@ -38,9 +51,10 @@ class MyProvider extends Component {
                     search: this.state.search,
                     setItem: this.setItem,
                     setLoading: this.setLoading,
-
-
-
+                    setCity: this.setCity,
+                    setUser : this.setUser,
+                    getCity :this.state.city,
+                    getUser: this.getUser
                 }}>
                 {this.props.children}
             </MyContext.Provider>

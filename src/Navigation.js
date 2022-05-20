@@ -78,32 +78,32 @@ const HomeTabs = () => {
 
 
 
-// const MyTest = () => {
-//     return (
-//         <Tab1.Navigator
-//             screenOptions={{
-//                 tabBarLabelStyle: { color: 'white', fontWeight: 'bold', fontSize: 15, marginTop: 0 },
-//                 tabBarItemStyle: {},
-//                 tabBarStyle: { backgroundColor: 'black', padding: 3 },
+const MyTest = () => {
+    return (
+        <Tab1.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { color: 'white', fontWeight: 'bold', fontSize: 15, marginTop: 0 },
+                tabBarItemStyle: {},
+                tabBarStyle: { backgroundColor: 'black', padding: 3 },
 
-//             }} tabBarOptions={{ showLabel: false }}>
-//             <Tab1.Screen name="CHATS"
-//                 options={{
-//                     tabBarIcon: ({ focused, color }) => (
-//                         <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
-//                     ),
+            }} tabBarOptions={{ showLabel: false }}>
+            <Tab1.Screen name="CHATS"
+                options={{
+                    tabBarIcon: ({ focused, color }) => (
+                        <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
+                    ),
 
-//                 }} component={Section} />
-//             <Tab1.Screen name="CALLS" options={{
-//                 tabBarIcon: ({ focused, color }) => (
-//                     <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
-//                 ),
+                }} component={Section} />
+            <Tab1.Screen name="CALLS" options={{
+                tabBarIcon: ({ focused, color }) => (
+                    <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
+                ),
 
-//             }} component={Section} />
+            }} component={Section} />
 
-//         </Tab1.Navigator>
-//     )
-// }
+        </Tab1.Navigator>
+    )
+}
 
 
 
@@ -111,10 +111,10 @@ const Navigation = () => {
     return (
 
         <Stack.Navigator >
-            {/* <Stack.Screen name="Loader" options={{ headerShown: false }} component={LoaderScreen} />
+            <Stack.Screen name="Loader" options={{ headerShown: false }} component={LoaderScreen} />
             <Stack.Screen name="Authcheck" options={{ headerShown: false }} component={AuthcheckScreen} />
             <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
-            <Stack.Screen name="Signup" options={{ headerShown: false }} component={SignupScreen} /> */}
+            <Stack.Screen name="Signup" options={{ headerShown: false }} component={SignupScreen} /> 
             <Stack.Screen name="HomePage" options={{ headerShown: false }} component={HomeTabs} />
             <Stack.Screen name="Slider" options={{ headerShown: false }} component={Slider} />
             <Stack.Screen name="Profile" options={{ headerShown: false }} component={ProfileScreen} />
@@ -124,19 +124,6 @@ const Navigation = () => {
             <Stack.Screen name="PlaceSingle" options={{ headerShown: false }} component={PlaceSingle} />
             <Stack.Screen name="Sections" options={{ headerShown: false }} component={Section} />
             <Stack.Screen name="HotelSingle" options={{ headerShown: false }} component={HotelSingle} />
-
-
-
-
-
-
-
-
-
-
-
-
-
         </Stack.Navigator>
     );
 };

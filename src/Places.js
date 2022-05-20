@@ -21,17 +21,11 @@ const db = firebase.firestore();
 
 
 const Places = () => {
-    const [info , setInfo] = useState([]);
-    const [user, setUser] = useState()
-    const [groceryList, setGroceryList] = useState();
     const [placeList, setPlaceList] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    var obj = {}
 
     //var list = [{ id: 0, name: 'Kesari Tours, Pune', image: 'https://gumlet.assettype.com/swarajya%2F2019-10%2Fc15839cf-81c2-47d5-a4df-84a5ff4fcef3%2FBandipur_National_park_road.jpg?w=640&q=75&auto=format%2Ccompress'},]
-    // const Fetchdata = ()=>{
    
-    
     useEffect(() => {
         db.collection("places").get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -65,8 +59,7 @@ const Places = () => {
                              <View style={styles.card}>
                                 <View style={styles.imageView}>
                                     <Image style={styles.image} source={{ uri: item.image }} ></Image>
-                                      <Text style={{ color: 'orange', fontFamily: boldFont, fontSize: 20, textAlign: 'center' }}>{item.name}</Text>
-                                    
+                                      <Text style={{ color: 'orange', fontFamily: boldFont,backgroundColor: '#f5fdf8', fontSize: 20, textAlign: 'center' }}>{item.name}</Text>
                                 </View>
                                 <View style={styles.cardtitleView}>
                                    

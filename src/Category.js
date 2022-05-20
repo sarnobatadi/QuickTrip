@@ -9,6 +9,17 @@ import axios from 'axios'
 
 import List from './List'
 import MyContext from './Contexts/Context'
+import { firebaseConfig } from '../firebase';
+import { initializeApp } from 'firebase/app';
+import firebase from 'firebase/compat/app';
+
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import 'firebase/auth';
+firebase.initializeApp(firebaseConfig);
+
+
+const db = firebase.firestore();
 
 
 
@@ -17,10 +28,10 @@ const Category = ({ navigation }) => {
     const context = useContext(MyContext)
     const searchInputRef = React.useRef(null);
 
-    useEffect(() => {
-        searchInputRef.current.focus();
-        getData()
-    }, []);
+    // useEffect(() => {
+    //     searchInputRef.current.focus();
+    //     getData()
+    // }, []);
 
 
     const [page, setPage] = useState(true)
@@ -33,55 +44,35 @@ const Category = ({ navigation }) => {
 
 
 
-    const getData = () => {
-        var config = {
-            method: 'get',
-            url: global.baseUrl + 'popular/',
-            // headers: {
-            // }
-        };
+    const [placeList, setPlaceList] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
 
-        axios(config)
-            .then(function (response) {
-                console.log(JSON.stringify(response.data));
-                if (response.data.status === 200) {
-                    setName(response.data.data)
-                    getHistory()
-                } else {
-                    console.warn('no internet connection')
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-                console.warn('no internet connection')
+    //var list = [{ id: 0, name: 'Kesari Tours, Pune', image: 'https://gumlet.assettype.com/swarajya%2F2019-10%2Fc15839cf-81c2-47d5-a4df-84a5ff4fcef3%2FBandipur_National_park_road.jpg?w=640&q=75&auto=format%2Ccompress'},]
+   
+    useEffect(() => {
+        searchInputRef.current.focus();
+        let a=[]
+        db.collection("cities").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                
+                var data = doc.data();
+                console.log(data);
 
-            });
-
-    }
-
-
-    const getHistory = () => {
-        var config = {
-            method: 'get',
-            url: global.baseUrl + 'history/',
-            // headers: {
-            // }
-        };
-
-        axios(config)
-            .then(function (response) {
-                setHistory(response.data.data)
+                a.push(data)
+                console.log(`${doc.id} => ${doc.data().name}`);
                 setLoading(false)
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
             });
+            setName(a);
+            setHistory(a);
+        });
+        setIsLoading(false)
+    },[])
+        
+    useEffect(() => {
+      console.log(placeList)
+    }, [isLoading])
 
-    }
-
-
-
+    
     const handleChange = (e) => {
         context.setItem(e)
         setsearchField(e)
@@ -105,8 +96,6 @@ const Category = ({ navigation }) => {
 
     const handleSelect = (name) => {
         handleChange(name)
-
-
     }
 
     const handleClear = (clear) => {
@@ -129,6 +118,8 @@ const Category = ({ navigation }) => {
                             <TextInput value={searchField} ref={searchInputRef} autoFocus={false} placeholder='Search places or locations' style={styles.search}
                                 onChangeText={(e) => handleChange(e)}>
                             </TextInput>
+                           
+                           
                             <TouchableOpacity onPress={(clear) => handleClear(clear)}>
                                 {close && <Icon style={styles.closeBtn} name={"close"} size={18} color={'grey'} />}
                             </TouchableOpacity>
@@ -144,20 +135,20 @@ const Category = ({ navigation }) => {
                         {loading ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator size="small" color="orange" /></View>
                             :
                             <View style={styles.suggestList}>
-                                {name.map(item =>
-                                    <TouchableOpacity onPress={() => handleSelect(item.name)} key={item.id}><Text style={styles.name}>{item.name}</Text></TouchableOpacity>
+                                {name.map((item,id) =>
+                                    <TouchableOpacity onPress={() => handleSelect(item.cityname)} key={item.id}><Text style={styles.name}>{item.cityname}</Text></TouchableOpacity>
                                 )}
                             </View>}
                         <View style={styles.history}>
                             <Text style={styles.recent}>RECENT SEARCHES</Text>
                         </View>
                         <View>
-                            {history.map(items =>
-                                <TouchableOpacity key={items.id} onPress={() => handleSelect(items.name)}>
+                            {history.map((items ,id)=>
+                                <TouchableOpacity key={items.id} onPress={() => handleSelect(items.cityname)}>
                                     <View style={styles.historyList}>
                                         <Icon name={"history"} size={22} color={'rgba(52, 52, 52, 0.5)'} />
                                         <View style={{ marginHorizontal: '8%' }} >
-                                            <Text style={{ fontFamily: baseFont, fontSize: 16 }}>{items.name}</Text>
+                                            <Text style={{ fontFamily: baseFont, fontSize: 16 }}>{items.cityname}</Text>
                                         </View>
                                     </View>
                                 </TouchableOpacity>)}
