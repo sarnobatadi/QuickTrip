@@ -1,0 +1,95 @@
+{% extends 'Forms/base.html' %}
+
+{% block title %}
+QuickTrip
+{% endblock title %}
+
+{% block content %}
+
+<div class="card-body">
+  <h1>Bookings</h1>
+  <table id="datatablesSimple">
+    <thead>
+      <tr>
+        <th>Travelers</th>
+        <th>Date</th>
+        <th>Package</th>
+        
+      </tr>
+    </thead>
+
+    <tbody>
+
+      {% for sdata in FormData%}
+      <tr>
+        <th>{{sdata.UserDoc}} </th>
+        <th>{{sdata.date}}</th>
+        <th>{{sdata.packageDoc}} </th>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<!-- <div class="card-body">
+  <h4>Insert New Entry</h4>
+  <form class="js-validation-bootstrap" action="/Places/" method="POST">
+    {% csrf_token%}
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="s_id">Name</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="name" name="name" placeholder="Tourist Place Name" required>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Address</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="description" name="description" placeholder="description" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Pickpoint</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="point" name="point" placeholder="Pickpoint" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+        <label class="col-lg-4 col-form-label" for="dept_name">City</label>
+        <div class="col-lg-8">
+          <select name="city" id="city">
+            {% for sdata in cityData%}
+            <option value="{{sdata.cityname}}">{{sdata.cityname}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Image Link</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="imglink" name="imglink" placeholder="Image Link" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+   
+    <div class="d-grid gap-2 d-md-block" style="display: flex; justify-content:space-between">
+      <button type="submit" class="btn btn-success" style="margin: 0.3rem;"><i
+          class="fas fa-save"></i>&nbsp;&nbsp;Save</button>
+      <br>
+    </div>
+  </form>
+</div> -->
+
+{%endblock%}

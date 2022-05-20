@@ -1,0 +1,53 @@
+{% extends 'Forms/base.html' %}
+
+{% block title %}
+QuickTrip
+{% endblock title %}
+
+{% block content %}
+
+<div class="card-body">
+  <h1>Add a city</h1>
+  <table id="datatablesSimple">
+    <thead>
+      <tr>
+        <th>City</th>
+        
+      </tr>
+    </thead>
+
+    <tbody>
+
+      {% for sdata in FormData%}
+      <tr>
+        <th>{{sdata.cityname}} </th>
+        
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<div class="card-body">
+  <h4>Insert New Entry</h4>
+  <form class="js-validation-bootstrap" action="/City/" method="POST">
+    {% csrf_token%}
+    <div class="form-group row">
+        <label class="col-lg-4 col-form-label" for="city">City</label>
+        <div class="col-lg-8">
+            <div class="col-lg-8">
+                <input type="text" class="form-control" id="city" name="city" placeholder="Add a city" required>
+              </div>  
+        </div>
+      </div>
+    <br/>
+    <div class="d-grid gap-2 d-md-block" style="display: flex; justify-content:space-between">
+      <button type="submit" class="btn btn-success" style="margin: 0.3rem;"><i
+          class="fas fa-save"></i>&nbsp;&nbsp;Save</button>
+      <br>
+    </div>
+  </form>
+</div>
+
+{%endblock%}

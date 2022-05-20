@@ -1,0 +1,131 @@
+{% extends 'Forms/base.html' %}
+
+{% block title %}
+QuickTrip
+{% endblock title %}
+
+{% block content %}
+
+<div class="card-body">
+  <h1>Packages from {{CompanyName}}</h1>
+  <table id="datatablesSimple">
+    <thead>
+      <tr>
+        <th>City</th>
+        <th>Description</th>
+        <th>Package Name</th>
+        <th>Duration</th>
+        <th>Pickup Point</th>
+        <th>Time</th>
+        <th>Price</th>
+        
+      </tr>
+    </thead>
+
+    <tbody>
+
+      {% for sdata in FormData%}
+      <tr>
+        <th>{{sdata.location}} </th>
+        <th>{{sdata.description}}</th>
+        <th>{{sdata.packageName}} </th>
+        <th>{{sdata.duration}} </th>
+        <th>{{sdata.pickupPoint}} </th>
+        <th>{{sdata.time}} </th>
+        <th>{{sdata.price}}</th>
+        
+        
+       
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<div class="card-body">
+  <h4>Insert New Entry</h4>
+  <form class="js-validation-bootstrap" action="/Package/" method="POST">
+    {% csrf_token%}
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="s_id">Location</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="location" name="location" placeholder="Location" required>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Description</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="description" name="description" placeholder="description" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Package Name</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="packageName" name="packageName" placeholder="packageName" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Price</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="price" name="price" placeholder="price" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Duration</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="price" name="duration" placeholder="duration" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Pickup Point</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="price" name="pickupPoint" placeholder="Pickup Point" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Time</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="price" name="time" placeholder="Time" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group row">
+      <label class="col-lg-4 col-form-label" for="i_id">Image Link</label>
+      <div class="col-lg-8">
+        <div class="col-lg-8">
+          <input type="text" class="form-control" id="imglink" name="imglink" placeholder="Image Link" required>
+        </div>
+      </div>
+    </div>
+    <br/>
+   
+    <div class="d-grid gap-2 d-md-block" style="display: flex; justify-content:space-between">
+      <button type="submit" class="btn btn-success" style="margin: 0.3rem;"><i
+          class="fas fa-save"></i>&nbsp;&nbsp;Save</button>
+      <br>
+    </div>
+  </form>
+</div>
+
+{%endblock%}
