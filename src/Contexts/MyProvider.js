@@ -9,8 +9,10 @@ class MyProvider extends Component {
     state = {
         search: null,
         loading: true,
-        city:'aa',
-        user:''
+        city:'',
+        user:'',
+        touristPlaces:[],
+        touristPackages:[]
     };
 
 
@@ -30,13 +32,15 @@ class MyProvider extends Component {
             this.setState({ loading: false })
         }, 200);
     };
-    getUser=()=>{
-        return this.state.user;
-    }
-    getCity=()=>{
-        return this.state.city;
+    
+    setTouristPlaces =(list)=>{
+        this.setState({touristPlaces:list})
     }
 
+    setTouristPackages =(list)=>{
+        this.setState({touristPackages:list})
+    }
+    
 
     filterList = (lis) => {
         return lis.filter(listItem => listItem.cityname.toLowerCase().includes(this.state.search.toLowerCase()));
@@ -54,7 +58,11 @@ class MyProvider extends Component {
                     setCity: this.setCity,
                     setUser : this.setUser,
                     getCity :this.state.city,
-                    getUser: this.getUser
+                    getUser: this.state.user,
+                    setTouristPlaces: this.setTouristPlaces,
+                    getTouristPlaces : this.state.touristPlaces,
+                    setTouristPackages: this.setTouristPackages,
+                    getTouristPackages: this.state.touristPackages
                 }}>
                 {this.props.children}
             </MyContext.Provider>

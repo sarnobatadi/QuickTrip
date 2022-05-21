@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, TextInput, Image } from 'react-native'
 import './global';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,161 +8,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { CircleFade } from 'react-native-animated-spinkit'
 import { set } from 'lodash';
+import { auth } from './firebase';
+import MyContext from './Contexts/Context';
 
 
 export const Profile = ({ navigation }) => {
-
-
-    const [name, setName] = useState(null)
-    const [place, setPlace] = useState(null)
-    const [experience, setExperience] = useState(null)
-    const [rating, setRating] = useState()
-    const [image, setImage] = useState(null)
-    const [profile, setProfile] = useState(null)
-    const [disabled, setDisabled] = useState(true)
-    const [loading, setLoading] = useState(false)
-
-
-
-
-    const register = () => {
-        const data = new FormData()
-        data.append('name', name);
-        data.append('place', place);
-        data.append('experience', experience);
-        data.append('rating', rating);
-        data.append('image', image);
-        data.append('profile', profile);
-
-        var config = {
-            method: 'post',
-            url: global.baseUrl + 'api/users/',
-            // headers: {
-            //     ...data.getHeaders()
-            // },
-            data: data
-        };
-        console.log(config.url, config.data)
-        axios(config)
-            .then(function (response) {
-                goTo()
-                setLoading(false)
-                setName('')
-                setPlace('')
-                setExperience('')
-                setRating('')
-                setImage(null)
-                setDisabled(true)
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
-    const goTo = async () => {
-        await navigation.navigate('Sections')
-    }
-
-
-
-    const handleChange = (e) => {
-        setRating(e)
-        console.log(rating, 'ddjodj')
-        if (name != null && e != null) {
-            if (name.length >= 2 && e.length >= 1) {
-                console.log(name, 'inside')
-                setDisabled(false)
-            } else {
-                setDisabled(true)
-            }
-        }
-
-    }
-
-
-    const imagePicker = () => {
-        let ImagePickerOptions = {
-            title: 'Choose your profile photo',
-            maxWidth: 1000,
-            mediaType: 'photo',
-            maxHeight: 1000,
-            quality: 1,
-            storageOptions: {
-                skipBackup: true,
-            },
-        };
-
-        launchImageLibrary(ImagePickerOptions, response => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                const image_dir = response.assets[0];
-                const image = {
-                    uri: image_dir.uri,
-                    // type: 'jpeg',
-                    type: 'multipart/form-data',
-                    name: image_dir.fileName,
-                };
-                setImage(image), () => console.log(image, 'dd');
-            }
-        });
-    };
-
-
-
-    const profilePic = () => {
-        let ImagePickerOptions = {
-            title: 'Choose your profile photo',
-            maxWidth: 1000,
-            mediaType: 'photo',
-            maxHeight: 1000,
-            quality: 1,
-            storageOptions: {
-                skipBackup: true,
-            },
-        };
-
-        launchImageLibrary(ImagePickerOptions, response => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                const image_dir = response.assets[0];
-                const profile = {
-                    uri: image_dir.uri,
-                    type: 'jpeg',
-                    type: 'multipart/form-data',
-                    name: image_dir.fileName,
-                };
-                setProfile(profile), () => console.log(profile, 'dd');
-            }
-        });
-    };
-
-
-    const upload = () => {
-        setLoading(true)
-        register()
-    }
-
-
+    const context = useContext(MyContext)
 
     const signOut = async () => {
+        auth.signOut();
         await AsyncStorage.clear();
         navigation.reset({
             index: 0,
             routes: [{ name: 'Login' }],
         })
     }
-
 
     return (
         <View style={styles.container}>
@@ -175,70 +35,37 @@ export const Profile = ({ navigation }) => {
                             <Text style={{ color: 'orange', fontFamily: liteFont, fontSize: 20, marginLeft: 80 }}>User Account</Text>
                         </View>
                     </View>
+                  
                     <View style={styles.imageMainContainer}>
                         <View style={styles.image2Container}>
-                            {profile !== null ? (
-                                <Image
-                                    source={profile
-
-                                    }
-
-                                    style={[styles.image2]}
-                                />
-                            ) : (
+                           
                                 <Image
                                     source={{
                                         uri: 'https://st2.depositphotos.com/1006318/5909/v/950/depositphotos_59095529-stock-illustration-profile-icon-male-avatar.jpg',
                                     }}
                                     style={[styles.image2]}
                                 />
-                            )}
-
-                            <TouchableOpacity style={styles.camera} onPress={() => profilePic()}>
+                            <TouchableOpacity style={styles.camera} >
                                 <Icon name={"camera"} color={"black"} size={20} />
                             </TouchableOpacity>
-
                         </View>
                     </View>
-
                     <View style={styles.inputContainer}>
                         <View style={styles.username}>
                             <Icon name={"account"} size={20} color={'orange'} style={{ paddingRight: 5 }} />
-                            <TextInput value={name} placeholder='Name' style={styles.search}
-                                onChangeText={(e) => setName(e)}>
+                            <TextInput  placeholder='Name' disabled style={styles.search}>
                             </TextInput>
+                            <Text style={{ fontSize: 20, color: 'orange'}}> {context.getUser.displayName}</Text>
                         </View>
                         <View style={styles.username}>
-                            <Icon name={"crosshairs-gps"} size={20} color={'orange'} style={{ paddingRight: 5 }} />
-                            <TextInput value={place} placeholder='Visited Location' style={styles.search}
-                                onChangeText={(e) => setPlace(e)}>
+                            <Icon name={"account"} size={20} color={'orange'} style={{ paddingRight: 5 }} />
+                            <TextInput  placeholder='Email' disabled style={styles.search}>
                             </TextInput>
-                        </View>
-                        <View style={styles.textPara}>
-                            <TextInput value={experience} placeholder='Experience' style={styles.address}
-                                onChangeText={(e) => setExperience(e)}>
-                            </TextInput>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <View style={{ ...styles.username, width: 140 }}>
-                                <Icon name={"star-half-full"} size={20} color={'orange'} />
-                                <TextInput value={rating} keyboardType="numeric" maxLength={1} placeholder='Rating out of 9' style={styles.search}
-                                    onChangeText={(e) => handleChange(e)}>
-                                </TextInput>
-                            </View>
-                            <TouchableOpacity style={styles.imageButton} onPress={() => imagePicker()}>
-                                <Icon name={"camera"} size={22} color={'orange'} />
-                                <Text style={{ color: 'white', fontFamily: liteFont, fontSize: 16 }}>Pick Image</Text>
-                            </TouchableOpacity>
-                        </View>
-                        {loading &&
-                            <View style={{ alignItems: 'center' }}>
-                                <Text>Uploading...</Text>
-                                <CircleFade size={50} color="orange" />
-                            </View>}
+                            <Text style={{ fontSize: 20, color: 'orange'}}> {context.getUser.email}</Text>
+                        </View>     
                         <View style={{ alignItems: 'center', marginVertical: 30 }}>
                             <TouchableOpacity style={{ ...styles.changePassword, backgroundColor: 'white', borderColor: 'orange', borderWidth: 0.5 }}
-                                disabled={disabled} onPress={() => upload()}>
+                                 onPress={() => upload()}>
                                 <View elevation={5} style={styles.lock}>
                                     <Icon name={"upload"} color={"orange"} size={22} />
                                 </View>
@@ -251,13 +78,9 @@ export const Profile = ({ navigation }) => {
                                 <Text style={{ fontFamily: liteFont, fontSize: 20, color: 'orange' }}>Sign Out</Text>
                             </TouchableOpacity>
                         </View>
-
-
                     </View>
-
                 </View>
             </ScrollView>
-
         </View>
     )
 }

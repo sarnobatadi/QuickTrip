@@ -2,28 +2,23 @@ import React, { useState } from 'react'
 import { View, Text, StyleSheet, ImageBackground, Image, TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Flow } from 'react-native-animated-spinkit'
-import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import './global';
-import global from './global'
+import { auth, createUserProfileDocument } from './firebase';
 
 const Signup = ({ navigation }) => {
 
 
     const [modal, setModal] = useState(false)
     const [hidePass, setHidePass] = useState(true)
-    const [email, setEmail] = useState(null)
-    const [username, setUsername] = useState(null)
-    const [password, setPassword] = useState(null)
     const [disabled, setDisabled] = useState(true);
 
 
     const handleChange = (e) => {
         setPassword(e)
-        if (username != null && e != null) {
-            if (username.length > 0 && e.length >= 3) {
+        if (displayName != null && e != null) {
+            if (displayName.length > 0 && e.length >= 3) {
                 setDisabled(false)
-                console.log(username, 'ee')
+                console.log(displayName, 'ee')
                 console.log(password, 'eed')
                 console.log(email)
             } else {
@@ -33,35 +28,35 @@ const Signup = ({ navigation }) => {
 
     }
 
-    const register = () => {
-        const data = new FormData()
-        data.append('email', email);
-        data.append('username', username);
-        data.append('password', password);
+    // const register = () => {
+    //     const data = new FormData()
+    //     data.append('email', email);
+    //     data.append('displayName', displayName);
+    //     data.append('password', password);
 
-        var config = {
-            method: 'post',
-            url: global.baseUrl + 'registers/',
-            // headers: {
-            //     ...data.getHeaders()
-            // },
-            data: data
-        };
-        console.log(config.url, config.data)
-        axios(config)
-            .then(function (response) {
-                if (response.data.status === 200) {
-                    setAsync(response.data.token)
-                } else {
-                    alert('failed to Signup')
-                }
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                alert('User Already Exist')
-                console.log(error);
-            });
-    }
+    //     var config = {
+    //         method: 'post',
+    //         url: global.baseUrl + 'registers/',
+    //         // headers: {
+    //         //     ...data.getHeaders()
+    //         // },
+    //         data: data
+    //     };
+    //     console.log(config.url, config.data)
+    //     axios(config)
+    //         .then(function (response) {
+    //             if (response.data.status === 200) {
+    //                 setAsync(response.data.token)
+    //             } else {
+    //                 alert('failed to Signup')
+    //             }
+    //             console.log(JSON.stringify(response.data));
+    //         })
+    //         .catch(function (error) {
+    //             alert('User Already Exist')
+    //             console.log(error);
+    //         });
+    // }
 
 
 
@@ -81,7 +76,7 @@ const Signup = ({ navigation }) => {
 
 
 
-    const usemodal = () => {
+    const useModal = () => {
         setModal(!modal)
         setTimeout(() => {
 
@@ -90,7 +85,24 @@ const Signup = ({ navigation }) => {
 
     }
 
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [displayName, setDisplayName] = useState("")
 
+  const handleSubmit = async () => {
+    
+
+    try {
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        await createUserProfileDocument(user, { displayName });
+        setDisplayName("")
+        setEmail("")
+        setPassword("")
+        setAsync("f3803f332fbd386d78d120cb5163291818a53cfa6a5ff68de1f8d8feae5a0a84")
+    } catch (error) {
+        console.error(error)
+    };
+  }
     return (
         <View style={styles.container}>
             <Modal animationType="slide" transparent={true} visible={modal} onRequestClose={() => {
@@ -126,10 +138,10 @@ const Signup = ({ navigation }) => {
                                 onChangeText={(e) => setEmail(e)}>
                             </TextInput>
                         </View>
-                        <View style={styles.username}>
+                        <View style={styles.displayName}>
                             <Icon name={"account"} size={20} color={'orange'} />
-                            <TextInput placeholder='Username' style={styles.search}
-                                onChangeText={(e) => setUsername(e)}>
+                            <TextInput placeholder='displayName' style={styles.search}
+                                onChangeText={(e) => setDisplayName(e)}>
                             </TextInput>
                         </View>
                         <View style={styles.password}>
@@ -141,7 +153,7 @@ const Signup = ({ navigation }) => {
                             <Icon name={hidePass ? 'eye-off' : 'eye'} size={20} color={'grey'}
                                 onPress={() => setHidePass(!hidePass)} />
                         </View>
-                        <TouchableOpacity disabled={disabled} style={styles.btn} onPress={() => register()}>
+                        <TouchableOpacity disabled={disabled} style={styles.btn} onPress={() => handleSubmit()}>
                             <ImageBackground style={[styles.button, disabled && { ...styles.button, opacity: 0.4 }]} imageStyle={{ height: 50, width: 120, borderRadius: 40 }} source={require('../assets/bb.jpg')}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ color: 'white', fontSize: 18, fontFamily: liteFont, textAlign: 'center' }}>Sign Up</Text>
@@ -204,7 +216,7 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 20
     },
-    username: {
+    displayName: {
         flexDirection: 'row',
         alignItems: 'center',
         // backgroundColor: '#f5f5fd',

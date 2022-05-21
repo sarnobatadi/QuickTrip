@@ -6,6 +6,7 @@ import ImageView from "react-native-image-viewing";
 import MyContext from './Contexts/Context'
 
 import Slider from './slider/Slider'
+import { auth, createUserProfileDocument, firestore } from './firebase';
 
 
 
@@ -14,18 +15,10 @@ const HomePage = ({ navigation }) => {
     const [modal, setModal] = useState(false)
     const [visible, setIsVisible] = useState(false);
     const context = useContext(MyContext)
-    //const name=context.getCity()
+    const [isLoading, setIsLoading] = useState(true)
+    const [list, setList] = useState([])
 
-
-
-    const category = [{ id: 1, name: 'Adventure', image: 'https://i.pinimg.com/originals/ec/6c/73/ec6c733bbe59569b43e1d034118aa090.jpg' },
-    { id: 2, name: 'Amusment', image: 'https://image.shutterstock.com/image-vector/ice-peak-mountain-green-meadows-260nw-1337286755.jpg' },
-    // { id: 3, name: 'Camping', image: 'https://i.pinimg.com/originals/ec/6c/73/ec6c733bbe59569b43e1d034118aa090.jpg' },
-    // { id: 4, name: 'Camping', image: 'https://i.pinimg.com/originals/ec/6c/73/ec6c733bbe59569b43e1d034118aa090.jpg' },
-    // { id: 5, name: 'Camping', image: 'https://i.pinimg.com/originals/ec/6c/73/ec6c733bbe59569b43e1d034118aa090.jpg' },
-
-
-    ]
+   
 
     const images = [
         {
@@ -43,18 +36,37 @@ const HomePage = ({ navigation }) => {
     ];
 
 
-    const reels = [{
-        id: 1, name: 'Krishna River', place: 'Sangli', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4'
-    },
-    { id: 2, name: 'Ganpati Mandir', place: 'Sangli', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4' },
-    { id: 3, name: 'Dandoba', place: 'Sangli', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4' },
+    // const reels = [{
+    //     id: 1, name: 'Krishna River', place: 'Sangli', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4'
+    // },
+    // { id: 2, name: 'Ganpati Mandir', place: 'Sangli', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4' },
+    // { id: 3, name: 'Dandoba', place: 'Sangli', image: 'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4' },
 
-    ]
+    // ]
 
-    useEffect(() => {
-      
-    }, [name])
-    
+   
+     useEffect(() => {
+        const unSubscribeFromAuth = auth.onAuthStateChanged( async userAuth => {
+            if (userAuth) {
+                const userRef = await createUserProfileDocument(userAuth);
+                userRef.onSnapshot(snapShot => {
+                    context.setUser( {
+                        id: snapShot.id,
+                        ...snapShot.data()
+                        }
+                    );
+                    //updateTouristPackagesList(snapShot.data().lastSearch);
+                })
+            } else {
+                context.setUser(userAuth)
+            }
+            
+            
+        }) 
+        return () => {
+            unSubscribeFromAuth();
+        }
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -63,7 +75,6 @@ const HomePage = ({ navigation }) => {
             }}>
                 <View style={styles.modalView}>
                     <Text>dugduefe</Text>
-
                 </View>
             </Modal>
             <ImageBackground imageStyle={{ borderBottomRightRadius: 40 }} style={styles.imageHotel} source={{ uri: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=735&q=80' }}>
@@ -72,96 +83,124 @@ const HomePage = ({ navigation }) => {
                         <View style={styles.subContainer}>
                             <View style={styles.title}>
                                 <Text style={{ fontSize: 24, fontFamily: liteFont, color: 'white' }}>Hi</Text>
-                                <Text style={{ fontSize: 22, fontFamily: baseFont, color: 'orange', marginLeft: 6 }}>Aditya,</Text>
+                                <Text style={{ fontSize: 22, fontFamily: baseFont, color: 'orange', marginLeft: 6 }}>{context.getUser!==null ?context.getUser.displayName:""},</Text>
                                 <View activeOpacity={0.9} style={{ paddingLeft: 180, alignItems: 'center' }}
                                     onPress={() => setModal(!modal)}>
                                     <Icon name={"bell-ring"} size={30} color={'orange'} onPress={() => setModal(!modal)} />
                                 </View>
-
                             </View>
+                            
                             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Text style={{ fontSize: 24, color: 'white' }}>𝐰𝐡𝐞𝐫𝐞 𝐝𝐨 𝐮 𝐰𝐚𝐧𝐭 𝐭𝐨  {context.getCity}{console.log("**********",context.getCity)}</Text>
+                                <Text style={{ fontSize: 24, color: 'white' }}>𝐰𝐡𝐞𝐫𝐞 𝐝𝐨 𝐮 𝐰𝐚𝐧𝐭 𝐭𝐨 </Text>
                                 <Text style={{ fontSize: 26, fontFamily: liteFont, color: 'orange', marginLeft: 6 }}>ɠơ </Text>
                                 <Text style={{ fontSize: 25, fontFamily: liteFont, color: '#fff' }}>?̾</Text>
                             </View>
                             <TouchableOpacity style={styles.searchView} activeOpacity={0.7}
                                 onPress={() => navigation.navigate('Category')}>
                                 <Icon name={"magnify"} size={24} color={'orange'} />
-                                <Text style={{ color: '#f1f5f9', fontFamily: baseFont, fontSize: 15, paddingLeft: 5 }}>Search Places..</Text>
+                                <Text style={{ color: '#f1f5f9', fontFamily: baseFont, fontSize: 15, paddingLeft: 5 }}>Select City..</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={styles.titleHead}>
-                        <Text style={{ fontSize: 20, color: 'black', fontFamily: boldFont }}>Categories</Text>
-                        <TouchableOpacity>
-                            <Text style={{ fontSize: 15, color: 'orange', fontFamily: liteFont }}>See All</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.cat}>
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            <View style={styles.category}>
-                                {category.map(item =>
-                                    <TouchableOpacity activeOpacity={0.8} style={styles.Art} key={item.id} onPress={() =>
-                                        navigation.navigate('HotelSingle')}>
-                                        <View style={styles.imgContainer}>
-                                            <Image style={styles.img} source={{ uri: item.image }} />
-                                        </View>
-                                        <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 15 }}> {item.name}</Text>
-                                    </TouchableOpacity>)}
-                            </View>
-                        </ScrollView>
-                    </View>
-                    <View style={styles.bgm}>
-                        <View style={styles.places}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: 20, color: 'black', fontFamily: boldFont }}>Sangli Districts</Text>
-                                <TouchableOpacity>
-                                    <Text style={{ fontSize: 15, color: 'orange', fontFamily: liteFont }}>See All</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.slider}>
-                                <Slider navigation={navigation} />
-                            </View>
-                            <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: 22, color: 'black', fontFamily: boldFont }}>Discover</Text>
-                                <TouchableOpacity>
-                                    <Text style={{ fontSize: 15, color: 'orange', fontFamily: liteFont }}>More</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={{ paddingLeft: 10 }}>
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            <View style={styles.reels}>
-                                {reels.map(item =>
-                                    <TouchableOpacity activeOpacity={0.7} style={{ marginHorizontal: 6 }} key={item.id} onPress={() => setIsVisible(true)}>
-                                        <ImageBackground imageStyle={{ height: 250, width: 160, borderRadius: 12 }} style={styles.img2} source={{ uri: item.image }}>
-                                            <View style={styles.inside}>
-                                                <View style={styles.head}>
-                                                    <Text style={{ color: '#fff', fontFamily: liteFont, fontSize: 15 }}>{item.name}</Text>
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 6 }}>
-                                                        <Icon name={"map-marker"} size={18} color={'orange'} />
-                                                        <Text style={{ fontSize: 12, color: '#fff', fontFamily: baseFont }}>{item.place}</Text>
+                    {
+                        context.getUser!==null?(
+                            <>
+                                {
+                                    context.getUser.lastSearch!==''?(
+                                        <>     
+                                            <View style={{ flexDirection: 'row', alignItems: 'center',paddingLeft:'3%' }}>
+                                                <Icon name={"map-marker"} size={12} color={'orange'} />
+                                                <Text style={{ fontSize: 15, fontFamily: liteFont, color: 'orange'}}> {context.getUser.lastSearch}</Text>
+                                            </View>
+                                           
+                                            
+                                            <View style={styles.bgm}>
+                                                <View style={styles.places}>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                        <Text style={{ fontSize: 20, color: 'black', fontFamily: boldFont }}>Package tours</Text>
+                                                        <TouchableOpacity>
+                                                            <Text style={{ fontSize: 15, color: 'orange', fontFamily: liteFont }}>See All</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                                                    <View style={styles.reels}>
+                                                       
+                                                        {
+                                                            context.getTouristPackages && context.getTouristPackages.map((item,id) =><TouchableOpacity activeOpacity={0.7} style={{ marginHorizontal: 6 }} key={id} onPress={() => navigation.navigate("PackageSingle",{item:item})}>
+                                                                <ImageBackground imageStyle={{ height: 250, width: 160, borderRadius: 12 }} style={styles.img2} source={{ uri: item.imglink }}>
+                                                                    <View style={styles.inside}>
+                                                                        <View style={styles.head}>
+                                                                            <Text style={{ color: '#fff', fontFamily: liteFont, fontSize: 15 }}>{item.packageName}</Text>
+                                                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 6 }}>
+                                                                                <Icon name={"map-marker"} size={18} color={'orange'} />
+                                                                                <Text style={{ fontSize: 12, color: '#fff', fontFamily: baseFont }}>{item.location}</Text>
+                                                                            </View>
+                                                                        </View>
+                                                                    </View>
+                                                                </ImageBackground>
+                                                            </TouchableOpacity>)
+                                                        }
+                                                    </View>
+                                                </ScrollView>
+                                                    <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                        <Text style={{ fontSize: 22, color: 'black', fontFamily: boldFont }}>Discover</Text>
+                                                        <TouchableOpacity onPress={()=>navigation.navigate("TouristPlaces")}>
+                                                            <Text style={{ fontSize: 15, color: 'orange', fontFamily: liteFont }}>More</Text>
+                                                        </TouchableOpacity>
                                                     </View>
                                                 </View>
                                             </View>
-                                        </ImageBackground>
-                                    </TouchableOpacity>)}
-                            </View>
-                        </ScrollView>
-                        <View style={styles.reelUnder}>
-                            <TouchableOpacity activeOpacity={0.7} style={styles.explore} onPress={() => navigation.navigate('Sections')}>
-                                <Text style={{ color: '#f1f5f9', fontFamily: liteFont, fontSize: 18 }}>Explore more places</Text>
-                                <Icon name={"arrow-decision-outline"} size={24} color={'black'} style={{ marginLeft: 10 }} />
-                            </TouchableOpacity>
-                        </View>
-                        <ImageView
-                            images={images}
-                            imageIndex={0}
-                            visible={visible}
-                            onRequestClose={() => setIsVisible(false)}
-                        />
-                    </View>
+                                            <View style={{ paddingLeft: 10 }}>
+                                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                                                    <View style={styles.reels}>
+                                                       
+                                                        {
+                                                            context.getTouristPlaces && context.getTouristPlaces.map(item =><TouchableOpacity activeOpacity={0.7} style={{ marginHorizontal: 6 }} key={item.id} onPress={() => navigation.navigate("PlaceSingle",{item:item})}>
+                                                                <ImageBackground imageStyle={{ height: 250, width: 160, borderRadius: 12 }} style={styles.img2} source={{ uri: item.image }}>
+                                                                    <View style={styles.inside}>
+                                                                        <View style={styles.head}>
+                                                                            <Text style={{ color: '#fff', fontFamily: liteFont, fontSize: 15 }}>{item.name}</Text>
+                                                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 6 }}>
+                                                                                <Icon name={"map-marker"} size={18} color={'orange'} />
+                                                                                <Text style={{ fontSize: 12, color: '#fff', fontFamily: baseFont }}>{item.city}</Text>
+                                                                            </View>
+                                                                        </View>
+                                                                    </View>
+                                                                </ImageBackground>
+                                                            </TouchableOpacity>)
+                                                        }
+                                                    </View>
+                                                </ScrollView>
+                                                <View style={styles.reelUnder}>
+                                                    <TouchableOpacity activeOpacity={0.7} style={styles.explore} onPress={() => navigation.navigate('Sections')}>
+                                                        <Text style={{ color: '#f1f5f9', fontFamily: liteFont, fontSize: 18 }}>Explore more places</Text>
+                                                        <Icon name={"arrow-decision-outline"} size={24} color={'black'} style={{ marginLeft: 10 }} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                                
+                                            </View>
+                                        </>
+                                    ):(
+                                        <>
+                                            <View style={styles.titleHead}>
+                                                <Text style={{ fontSize: 20, color: 'black', fontFamily: boldFont }}>OOPs!!!!!</Text>
+                                            </View>
+                                            <View style={styles.reelUnder}>
+                                                <TouchableOpacity activeOpacity={0.7} style={styles.explore} onPress={() => navigation.navigate('Category')}>
+                                                    <Text style={{ color: '#f1f5f9', fontFamily: liteFont, fontSize: 18 }}>Select City first to explore more</Text>
+                                                    <Icon name={"arrow-decision-outline"} size={24} color={'black'} style={{ marginLeft: 10 }} />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </>
+                                    )
+                                }
+                            </>
+                        ):(
+                            <>
+                                            <Text>aa</Text>
+                            </>
+                        )
+                    }
                 </ScrollView>
             </ImageBackground>
         </View>

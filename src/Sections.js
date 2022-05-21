@@ -1,54 +1,46 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useContext } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ReadMore from '@fawazahmed/react-native-read-more';
 
 import './global';
-import global from './global'
-import axios from 'axios'
+import MyContext from './Contexts/Context';
+
 
 const Sections = () => {
 
+    const [placeList, setPlaceList] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const context = useContext(MyContext)
 
-    const [user, setUser] = useState([])
-    const [loading, setLoading] = useState(true)
-
-
-    useEffect(() => {
-        getData()
-    }, []);
-
-    const getData = () => {
-        setLoading(true)
-        var config = {
-            method: 'get',
-            url: global.baseUrl + 'api/users/',
-            // headers: {}
-        };
-
-        axios(config)
-            .then(function (response) {
-                if (response.data.status === 200) {
-                    setUser(response.data.data)
-                    setLoading(false)
-                } else {
-                    console.warn('No Data')
-                }
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
+    var list = [{ id: 0, name: 'Kesari Tours, Pune', image: 'https://gumlet.assettype.com/swarajya%2F2019-10%2Fc15839cf-81c2-47d5-a4df-84a5ff4fcef3%2FBandipur_National_park_road.jpg?w=640&q=75&auto=format%2Ccompress'},]
+   
+    useEffect(async() => {
+        let a=[]
+        await firestore.collection("PackagesBooking").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                
+                var data = doc.data();
+                //setInfo(arr => [...arr , data]);
+                a.push({...data,id:doc.id})
+                console.log(data);
+                console.log(`${doc.id} => ${doc.data().name}`);
             });
+        });
+        setPlaceList(a)
+        setIsLoading(false)
+    },[])
+        
+    useEffect(() => {
+      console.log(placeList)
+      console.log(context.getTouristPackages)
+    }, [isLoading])
 
-    }
 
 
 
 
-
-    if (loading) {
-        return <View style={{ ...styles.container, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator size="large" color="orange" /></View>
-    }
+    
     return (
         <View style={styles.container}>
             <View style={styles.navBar}>
@@ -60,7 +52,7 @@ const Sections = () => {
                 </TouchableOpacity>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
-                {user.map(items =>
+                {list.map(items =>
                     <View style={styles.card} key={items.id}>
                         <View style={styles.cardTitle}>
                             <View style={{ padding: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

@@ -1,107 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground, ScrollView, Modal, TextInput, ActivityIndicator } from 'react-native'
+import { View, Text, Image, TouchableOpacity, StyleSheet,Linking, ImageBackground, ScrollView, Modal, TextInput, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios'
 
 import './global';
-import global from './global'
+
 
 
 
 const PlaceSingle = ({ navigation, route }) => {
-
-    useEffect(() => {
-        getData()
-    }, []);
-
-
-    const [page, setPage] = useState(true)
-    const [select, setSelect] = useState(1)
-    const [modal, setModal] = useState(false)
-    const [comment, setComment] = useState(null)
-    const [review, setReview] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [disabled, setDisabled] = useState(true);
-
-
-
-
-    const item = [{ id: 1, title: 'Overview' },
-    { id: 2, title: 'Gallery' },]
-
-    const content = [{ id: 1, title: 'Why Not Go', description: 'deufgirifug3f3gfo4shfe3g' }]
-
-
-
-    const handle = (e) => {
-        setSelect(e)
-        if (e === 1) {
-            setPage(true)
-            console.log(e, 'dd')
-        } else {
-            setPage(false)
-            console.log(e)
-        }
-    }
-
-
-    const handleChange = (e) => {
-        setComment(e)
-        if (e != null) {
-            if (e.length >= 1) {
-                setDisabled(false)
-            }
-            else {
-                setDisabled(true)
-            }
-        }
-
-    }
-
-
-    const pushData = () => {
-        const data = new FormData()
-        data.append('comment', comment);
-        var config = {
-            method: 'post',
-            url: global.baseUrl + 'reviews/',
-            // headers: {
-            // },
-            data: data
-        };
-        console.log(config.url, config.data)
-        axios(config)
-            .then(function (response) {
-                setLoading(true)
-                getData()
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
-
-    const getData = () => {
-        var config = {
-            method: 'get',
-            url: global.baseUrl + 'reviews/',
-            // headers: {}
-        };
-
-        axios(config)
-            .then(function (response) {
-                setReview(response.data.data)
-                setLoading(false)
-                setComment("")
-                setDisabled(true)
-                console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
 
     return (
         <View style={styles.container}>
@@ -113,67 +20,30 @@ const PlaceSingle = ({ navigation, route }) => {
                                 <Icon name={"keyboard-backspace"} size={35} color={'black'} />
                             </TouchableOpacity>
                             <View style={styles.name}>
-                                <Text style={{ fontSize: 30, fontFamily: liteFont, color: 'white' }}>{route.params.item.place},{ }</Text>
+                                <Text style={{ fontSize: 30, fontFamily: liteFont, color: 'white' }}>{route.params.item.name},{ }</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Icon name={"map-marker-radius"} size={18} color={'orange'} />
-                                    <Text style={{ fontSize: 16, fontFamily: boldFont, color: 'white' }}> {route.params.item.location}</Text>
+                                    <Text style={{ fontSize: 16, fontFamily: boldFont, color: 'white' }}> {route.params.item.city}</Text>
                                 </View>
 
                             </View>
                         </View>
                     </ImageBackground>
-                    <View style={styles.sub}>
-                        <View style={styles.title}>
-                            {item.map(item =>
-                                <TouchableOpacity key={item.id}>
-                                    <Text style={select == item.id ? { ...styles.over, borderBottomWidth: 2, borderBottomColor: 'orange', } : { ...styles.over, color: 'grey' }} onPress={() => handle(item.id)}>{item.title}</Text>
-                                </TouchableOpacity>)}
-                            <TouchableOpacity activeOpacity={0.5} onPress={() => setModal(!modal)}>
-                                <Text style={{ ...styles.over, color: 'grey' }}>Reviews</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View>
-                        {page === true ?
-                            <View style={styles.description}>
-                                <View style={{marginBottom:15}}>
-                                    <Text style={{ color: 'black', fontSize: 27, fontFamily: liteFont }}>WhY go Now : {route.params.item.place}</Text>
-                                </View>
-
-                                <Text style={{ fontFamily: baseFont }}>{route.params.item.description}</Text>
-                            </View> : <Text>{route.params.item.location}</Text>}
-                    </View>
+                    
+                   
                 </View>
-                <Modal animationType="slide" transparent={true} visible={modal} onRequestClose={() => {
-                    setModal(!modal);
-                }}>
-                    <View style={styles.modalView}>
-                        <View style={styles.modalContainer}>
-                            <TouchableOpacity style={{ width: '100%', borderRadius: 100, alignItems: 'center', }}
-                                onPress={() => setModal(!modal)}>
-                                <Icon name={"close-circle-outline"} size={28} color={'#FD6244'} />
-                            </TouchableOpacity>
-                            <ScrollView>
-                                <View style={{ borderBottomWidth: 1, borderColor: 'orange', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: 30, marginVertical: 25 }}>
-                                    <TextInput value={comment} placeholder='Submit Your Review' style={{ padding: 0 }}
-                                        onChangeText={(e) => handleChange(e)}>
+                <View style={{ alignItems: 'center', marginVertical: 30 }}>
 
-                                    </TextInput>
-
-                                    <TouchableOpacity onPress={() => pushData()} disabled={disabled} style={[disabled === true ? { ...styles.send, backgroundColor: 'grey' } : styles.send]}>
-                                        <Icon style={{ flex: 1 }} name={"send-circle-outline"} size={36} color={'white'} />
-                                    </TouchableOpacity>
-                                </View>
-                                {loading ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator size="small" color="orange" /></View>
-                                    :
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginVertical: 30, }}>
-                                        {review.map(item =>
-                                            <Text style={styles.comments} key={item.id}>{item.comment}</Text>)}
-                                    </View>}
-                            </ScrollView>
+                    <TouchableOpacity style={{ ...styles.changePassword, backgroundColor: 'white', borderColor: 'orange', borderWidth: 0.5 }}
+                    onPress={() => { Linking.openURL(`geo:0,0?q=${route.params.item.location}`); }}>
+                        <View elevation={5} style={styles.lock}>
+                            <Icon name={"map-marker"} color={"orange"} size={22} />
                         </View>
-                    </View>
-                </Modal>
+                        <Text style={{ fontFamily: boldFont, fontSize: 24, color: 'orange', textAlign: 'center' }}>See On the map</Text>
+                    </TouchableOpacity>
+                </View>
+                    
+                
             </ScrollView>
         </View>
 
@@ -192,6 +62,20 @@ const styles = StyleSheet.create({
     subContainer: {
         padding: '0%',
         // elevation:2,
+    },
+    changePassword: {
+        alignItems: 'center',
+        backgroundColor: 'black',
+        padding: '3%',
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        borderRadius: 12,
+        justifyContent: 'space-around',
+        marginVertical: 10,
+        elevation: 5,
+        width: '90%',
+        paddingRight: 60,
+
     },
     imageHotel: {
         height: 350,

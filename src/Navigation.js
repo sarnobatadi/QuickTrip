@@ -16,7 +16,7 @@ import ListScreen from "./List";
 import PlaceSingle from "./PlaceSingle";
 import Section from "./Sections";
 import HotelSingle from "./Hotel";
-
+import TouristPlacesScreen from './TouristPlaces';
 
 
 
@@ -26,12 +26,13 @@ import HotelSingle from "./Hotel";
 
 
 import Slider from './slider/Slider'
+import PackageSingle from './PackageSingle';
+import Bookings from './Bookings';
 
 
 
 
 
-const Tab1 = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -60,7 +61,7 @@ const HomeTabs = () => {
                 tabBarIcon: ({ focused, color }) => (
                     <Icon name="palm-tree" color={focused ? '#f18100' : color} size={28} />
                 ),
-            }} component={Section} />
+            }} component={Bookings} />
             <Tab.Screen name="Profile" options={{
                 tabBarIcon: ({ focused, color }) => (
                     <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
@@ -78,32 +79,6 @@ const HomeTabs = () => {
 
 
 
-const MyTest = () => {
-    return (
-        <Tab1.Navigator
-            screenOptions={{
-                tabBarLabelStyle: { color: 'white', fontWeight: 'bold', fontSize: 15, marginTop: 0 },
-                tabBarItemStyle: {},
-                tabBarStyle: { backgroundColor: 'black', padding: 3 },
-
-            }} tabBarOptions={{ showLabel: false }}>
-            <Tab1.Screen name="CHATS"
-                options={{
-                    tabBarIcon: ({ focused, color }) => (
-                        <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
-                    ),
-
-                }} component={Section} />
-            <Tab1.Screen name="CALLS" options={{
-                tabBarIcon: ({ focused, color }) => (
-                    <Icon name="account-tie" color={focused ? '#f18100' : color} size={28} />
-                ),
-
-            }} component={Section} />
-
-        </Tab1.Navigator>
-    )
-}
 
 
 
@@ -120,10 +95,13 @@ const Navigation = () => {
             <Stack.Screen name="Profile" options={{ headerShown: false }} component={ProfileScreen} />
             <Stack.Screen name="Category" options={{ headerShown: false }} component={CategoryScreen} />
             <Stack.Screen name="Places" options={{ headerShown: false }} component={PlacesScreen} />
+            <Stack.Screen name="TouristPlaces" options={{ headerShown: false }} component={TouristPlacesScreen} />
             <Stack.Screen name="List" options={{ headerShown: false }} component={ListScreen} />
             <Stack.Screen name="PlaceSingle" options={{ headerShown: false }} component={PlaceSingle} />
+             <Stack.Screen name="PackageSingle" options={{ headerShown: false }} component={PackageSingle} />
             <Stack.Screen name="Sections" options={{ headerShown: false }} component={Section} />
             <Stack.Screen name="HotelSingle" options={{ headerShown: false }} component={HotelSingle} />
+             <Stack.Screen name="Bookings" options={{ headerShown: false }} component={Bookings} />
         </Stack.Navigator>
     );
 };

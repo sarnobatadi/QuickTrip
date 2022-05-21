@@ -1,26 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import '../global';
-import './global';
-import global from './global'
-import axios from 'axios'
+
 
 
 import List from './List'
 import MyContext from './Contexts/Context'
-import { firebaseConfig } from '../firebase';
-import { initializeApp } from 'firebase/app';
-import firebase from 'firebase/compat/app';
 
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-import 'firebase/auth';
-firebase.initializeApp(firebaseConfig);
-
-
-const db = firebase.firestore();
-
+import { firestore } from "./firebase";
 
 
 const Category = ({ navigation }) => {
@@ -52,7 +39,7 @@ const Category = ({ navigation }) => {
     useEffect(() => {
         searchInputRef.current.focus();
         let a=[]
-        db.collection("cities").get().then((querySnapshot) => {
+        firestore.collection("cities").get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 
                 var data = doc.data();

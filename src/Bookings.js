@@ -12,7 +12,7 @@ import Navigation from './Navigation';
 
 
 
-const Places = ({ navigation }) => {
+const Bookings = ({ navigation }) => {
     const [placeList, setPlaceList] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const context = useContext(MyContext)
@@ -21,14 +21,16 @@ const Places = ({ navigation }) => {
    
     useEffect(async() => {
         let a=[]
-        await firestore.collection("package").get().then((querySnapshot) => {
+        await firestore.collection("PackagesBooking").get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 
                 var data = doc.data();
-                //setInfo(arr => [...arr , data]);
-                a.push({...data,id:doc.id})
-                console.log(data);
-                console.log(`${doc.id} => ${doc.data().name}`);
+                if(data.tmpUserDoc==context.getUser.id){
+                    a.push({...data,id:doc.id})
+                }
+                    
+                // console.log(data);
+                // console.log(`${doc.id} => ${doc.data().name}`);
             });
         });
         setPlaceList(a)
@@ -43,27 +45,20 @@ const Places = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={{ width: '100%', height: 50, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: 'orange', fontFamily: liteFont, textAlign: 'center', fontSize: 24 }}>Contact</Text>
+                <Text style={{ color: 'orange', fontFamily: liteFont, textAlign: 'center', fontSize: 24 }}>Bookings</Text>
             </View> 
             <ScrollView>
                 <View style={styles.subContainer}>
+                    {console.log(placeList)}
+                   
                     {placeList && placeList.map((item,id )=><View style={styles.cardView} key={id}>
                         <View style={styles.card}>
                                 <View style={styles.imageView}>
-                                    <Image style={styles.image} source={{ uri: item.imglink }} ></Image>
-                                      <Text style={{ color: 'orange', fontFamily: boldFont,backgroundColor: '#f5fdf8', fontSize: 20, textAlign: 'center' }}>{item.packageName}</Text>
+                                    <Text style={{ color: 'orange', fontFamily: boldFont,backgroundColor: '#f5fdf8', fontSize: 20, textAlign: 'center' }}>{item.packageDoc}</Text>
+                               
+                                    <Text style={{ color: 'orange', fontFamily: boldFont,backgroundColor: '#f5fdf8', fontSize: 20, textAlign: 'center' }}>{item.date}</Text>
                                 </View>
-                                <View style={styles.cardtitleView}>
-                                   
-                                    <View style={styles.contact}>
-                                        
-                                        <TouchableOpacity style={{ backgroundColor: '#f5fdf8', width: 100, alignItems: 'center', borderRadius: 6, elevation: 4 }}
-                                            onPress={() => navigation.navigate("PackageSingle",{item:item})}>
-                                            <Text style={{ color: 'black', fontFamily: boldFont, }}>Book Now</Text>
-                                            <Icon name={"book"} size={24} color={'green'} />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View> 
+                                
                             </View> 
                         </View>)}
                 </View>
@@ -72,7 +67,8 @@ const Places = ({ navigation }) => {
     )
 }
 
-export default Places
+export default Bookings 
+
 
 const styles = StyleSheet.create({
     container: {
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
 
     },
     imageView: {
-        height: 150,
+        
         width: '100%',
         borderRadius: 20,
         // elevation:4

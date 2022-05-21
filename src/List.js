@@ -2,21 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Image } from "react-native";
 import MyContext from './Contexts/Context'
 
-import { firebaseConfig } from '../firebase';
-import { initializeApp } from 'firebase/app';
-import firebase from 'firebase/compat/app';
 
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-import 'firebase/auth';
-firebase.initializeApp(firebaseConfig);
+import { firestore } from "./firebase";
 
-
-const db = firebase.firestore();
 
 const List = ({ navigation }) => {
-
-
 
     const context = useContext(MyContext)
     const [placeList, setPlaceList] = useState([])
@@ -26,11 +16,9 @@ const List = ({ navigation }) => {
    
     useEffect(() => {
         let a=[]
-        db.collection("cities").get().then((querySnapshot) => {
+        firestore.collection("cities").get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                
                 var data = doc.data();
-
                 a.push(data)
             });
             setPlaceList(a);
@@ -42,24 +30,71 @@ const List = ({ navigation }) => {
       console.log(placeList)
     }, [isLoading])
 
-
+    const handleSubmit =(lis)=>{
+        context.setCity(lis.cityname )
+        updateLastSearch(context.getUser,lis)
+        updateTouristPlacesList(lis);
+        updateTouristPackagesList(lis.cityname);
+        navigation.navigate('HomePage')
+    }
     
+    const updateLastSearch =  async (userAuth, urlData) =>{
+        if(!userAuth){
+            return;
+        }
+        const urlRef = firestore.doc(`user/${userAuth.id}`)
+        const urlSnapshot = await urlRef.get()
+        if(urlSnapshot.exists){
+            //console.log((urlSnapshot.data()))
+            try{
+                await urlRef.update({
+                    "lastSearch":urlData.cityname
+                })
+            } catch( error){
+                console.log('error updating data',error.message)
+            }
+        }
+        else {
+            console.log("Invalid id");
+        }
+    }
 
+    const updateTouristPlacesList= async(lis)=>{
+        let a=[]
+        await firestore.collection("touristPlaces").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                var data = doc.data();
+                if(data.city.toLowerCase()===lis.cityname.toLowerCase())
+                    a.push(data)
+            });
+        });
+        context.setTouristPlaces(a)
+        
+    }
+
+    const updateTouristPackagesList= async(lis)=>{
+        let a=[]
+        await firestore.collection("package").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                var data = doc.data();
+                console.log("data",data,lis)
+                a.push(data)
+            });
+        });
+        context.setTouristPackages(a)
+    }
+    
 
     if (isLoading) {
         return <View style={{ justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator size="small" color="orange" /></View>
     }
     return (
         <View>
-
             <View>
                 {placeList && context.filterList(placeList).map((lis, index) => (
                     <View style={styles.WrapperContainer} key={index}>
                         {/* <TouchableOpacity activeOpacity={0.3} onPress={() =>  navigation.navigate('PlaceSingle', { item: lis },pushData(list.place))}> */}
-                        <TouchableOpacity activeOpacity={0.3} onPress={() => {
-                            context.setCity(lis.cityname )
-                            navigation.navigate('HomePage')
-                        } }>
+                        <TouchableOpacity activeOpacity={0.3} onPress={() => handleSubmit(lis)}>
                             <View style={styles.listItems}>
                                 {/* <View style={styles.imageContainer}>
                                     <Image style={styles.image} source={{ uri: lis.image }} />
@@ -115,8 +150,4 @@ const styles = StyleSheet.create({
     titleContainer: {
         marginHorizontal: 20
     }
-
-
-
-
 })

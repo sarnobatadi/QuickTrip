@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import './global';
 import global from './global'
 import a from './login.json'
+import { auth } from './firebase';
 
 
 const Login = ({ navigation }) => {
@@ -17,10 +18,10 @@ const Login = ({ navigation }) => {
 
     const handleChange = (e) => {
         setPassword(e)
-        if (username != null && e != null) {
-            if (username.length > 0 && e.length >= 3) {
+        if (email != null && e != null) {
+            if (email.length > 0 && e.length >= 3) {
                 setDisabled(false)
-                console.log(username, 'ee')
+                console.log(email, 'ee')
                 console.log(password, 'eed')
             } else {
                 setDisabled(true)
@@ -30,45 +31,45 @@ const Login = ({ navigation }) => {
     }
 
 
-    const signIn = () => {
-        const data = new FormData()
-        data.append('username', username);
-        data.append('password', password);
+    // const signIn = () => {
+    //     const data = new FormData()
+    //     data.append('username', username);
+    //     data.append('password', password);
 
-        // var config = {
-        //     method: 'post',
-        //     url: global.baseUrl + 'logins/',
-        //     // headers: {
-        //     // },
-        //     data: data
-        // };
-        // console.log(config.url, config.data)
-        // axios(config)
-        //     .then(function (response) {
-        //         response={data: a}
-        //         console.log(response)
-        //         if (response.data.status === 200) {
-        //             setAsync(response.data.data.token)
-        //         } else{
-        //             console.log('Invalid')
-        //         }
-        //         console.log(JSON.stringify(response.data));
-        //     })
-        //     .catch(function (error) {
-        //         alert('Invaid Credentials')
-        //         console.log(error);
-        //     });
+    //     // var config = {
+    //     //     method: 'post',
+    //     //     url: global.baseUrl + 'logins/',
+    //     //     // headers: {
+    //     //     // },
+    //     //     data: data
+    //     // };
+    //     // console.log(config.url, config.data)
+    //     // axios(config)
+    //     //     .then(function (response) {
+    //     //         response={data: a}
+    //     //         console.log(response)
+    //     //         if (response.data.status === 200) {
+    //     //             setAsync(response.data.data.token)
+    //     //         } else{
+    //     //             console.log('Invalid')
+    //     //         }
+    //     //         console.log(JSON.stringify(response.data));
+    //     //     })
+    //     //     .catch(function (error) {
+    //     //         alert('Invaid Credentials')
+    //     //         console.log(error);
+    //     //     });
 
-        const response={"data": a}
-        console.log(response)
-        if (response.data.status === 200) {
-            setAsync(response.data.data.token)
-        } else{
-            console.log('Invalid')
-        }
-        console.log(JSON.stringify(response.data));
+    //     const response={"data": a}
+    //     console.log(response)
+    //     if (response.data.status === 200) {
+    //         setAsync(response.data.data.token)
+    //     } else{
+    //         console.log('Invalid')
+    //     }
+    //     console.log(JSON.stringify(response.data));
 
-    }
+    // }
 
 
     const setAsync = async (auth) => {
@@ -82,7 +83,21 @@ const Login = ({ navigation }) => {
 
 
 
+    const [email, setEmail] = useState("");
+    //const [password, setPassword] = useState("")
 
+    const handleSubmit = async () =>{
+       
+        try {
+            await auth.signInWithEmailAndPassword( email, password )
+            setEmail("")
+            setPassword("")
+            setAsync("f3803f332fbd386d78d120cb5163291818a53cfa6a5ff68de1f8d8feae5a0a84")
+        } catch (error) {
+            console.log(error)
+            alert('Invaid Credentials')
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -99,8 +114,8 @@ const Login = ({ navigation }) => {
                     <View style={styles.textInputContainer}>
                         <View style={styles.username}>
                             <Icon name={"account"} size={20} color={'orange'} />
-                            <TextInput placeholder='Username' style={styles.search}
-                                onChangeText={(e) => setUsername(e)}>
+                            <TextInput placeholder='Email' style={styles.search}
+                                onChangeText={(e) => setEmail(e)}>
                             </TextInput>
                         </View>
                         <View style={styles.password}>
@@ -112,7 +127,7 @@ const Login = ({ navigation }) => {
                             <Icon name={hidePass ? 'eye-off' : 'eye'} size={20} color={'grey'}
                                 onPress={() => setHidePass(!hidePass)} />
                         </View>
-                        <TouchableOpacity disabled={disabled} style={styles.btn} onPress={() => signIn()}>
+                        <TouchableOpacity disabled={disabled} style={styles.btn} onPress={() => handleSubmit()}>
                             <ImageBackground style={[styles.button, disabled && { ...styles.button, opacity: 0.4 }]} imageStyle={{ height: 50, width: 120, borderRadius: 40 }} source={require('../assets/bb.jpg')}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ color: 'white', fontSize: 20, fontFamily: liteFont }}>Login</Text>
